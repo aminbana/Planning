@@ -20,7 +20,10 @@ class Proposition:
             if key in self.vars:
                 self.vars[self.vars.index(key)] = value
         return self
-        
+    
+    def __hash__(self):
+        return hash (self.__repr__())
+
     def __str__(self):
         return self.__repr__()
 
