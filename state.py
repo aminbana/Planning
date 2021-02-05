@@ -63,12 +63,18 @@ class State:
                 all_mappings.append (mapping)
         
         return all_mappings
+    
+    def __eq__(self, other):
+        if isinstance(other, State):
+            if len (self.propositions - other.propositions) == 0:
+                return True
+        return False
 
 if __name__=="__main__":
     p_s = {p("cl","a"), p("he"), p("ot" , "b"), p("on", ["a","b"])}
     s = State(p_s)
     print (s)
-
+    print ("equality check" , s == deepcopy(s))
     p_s = {p("cl","b")}
     p_n = {p("he")}
     g = Goal(p_s,p_n)
