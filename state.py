@@ -31,15 +31,17 @@ class State:
         return True
     
     def isAppliable (self, a:Action):
-        for p in a.pre:
+        for p in a.pre_pos:
             if p not in self.propositions:
+                return False
+        for p in a.pre_neg:
+            if p in self.propositions:
                 return False
         return True
     
     def apply_unified_action(self, a:Action):
         assert self.isAppliable(a), "action:" + str (a) + "is not appliable to state:" + str(self)
         new_pros = (self.propositions - a.eff_neg) | a.eff_pos
-        print ("pros:" , self.propositions, "a neg:", a.eff_neg, "intersect:",  self.propositions ^ a.eff_neg , "diff:" , self.propositions - a.eff_neg)
         return State (new_pros)
     
     def get_all_unifications(self, action:Action):
@@ -58,12 +60,20 @@ class State:
         all_mappings = []
         for element in itertools.product(*all_perms):
             mapping = {e[0]:e[1] for e in element}
-            unified_action = deepcopy(action).substitue(mapping)
+            unified_action = action.substitute_and_copy(mapping)
             if self.isAppliable(unified_action):
                 all_mappings.append (mapping)
         
         return all_mappings
     
+    def get_all_possible_actions(self, all_actions):
+        unified_actions = []
+        for a in all_actions:
+            unifications = self.get_all_unifications(a)
+            for u in unifications:
+                unified_actions.append(a.substitute_and_copy(u))
+        return unified_actions
+
     def __eq__(self, other):
         if isinstance(other, State):
             if len (self.propositions - other.propositions) == 0:
@@ -84,11 +94,12 @@ if __name__=="__main__":
     print (s.isGoal(g))
 
 
-    pre = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
+    pre_pos = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
+    pre_neg = {}
     eff_pos = {p("cl","ob2"), p("hol","obj2"),}
     eff_neg = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
     
-    a = Action("unstack", pre, eff_pos, eff_neg)
+    a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg)
     
     unifications = s.get_all_unifications(a)
 
@@ -97,7 +108,7 @@ if __name__=="__main__":
     for u in unifications:
         print ("after applying" , u , ":")
         print (s.isAppliable(a))
-        unified_action = deepcopy(a).substitue(u)
+        unified_action = deepcopy(a).substitute_and_copy(u)
         print (unified_action)
         s_new = s.apply_unified_action(unified_action)
         print ("new_state:" , s_new)
