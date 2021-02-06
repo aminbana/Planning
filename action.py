@@ -4,22 +4,30 @@ from copy import deepcopy
 
 class Action:
     
-    def __init__(self, name, pre_pos, pre_neg, eff_pos, eff_neg):
+    def __init__(self, name, pre_pos, pre_neg, eff_pos, eff_neg, variables = None):
         self.name = name
         self.pre_pos = set (pre_pos)
         self.pre_neg = set (pre_neg)
         self.eff_pos = set (eff_pos)
         self.eff_neg = set (eff_neg)
+        if variables is None:
+            self.variables = list (self.get_vars())
+        else:
+            
+            assert isinstance(variables, list) , "only lists are allowed"
+            assert set (variables) == set (self.get_vars()), "variable names is incosistnet with action variables"
+            self.variables = variables
+
     
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        variables = self.get_vars()
+        variables = self.variables
         return self.name + "(" + ",".join (variables) + ")" + ": pre:[" + ",".join(convert_set_to_string_list(self.pre_pos)) + "~,".join(convert_set_to_string_list(self.pre_neg)) + "]" +", eff:[" + ",".join(convert_set_to_string_list(self.eff_pos)) + " |  ~" + "~,".join(convert_set_to_string_list(self.eff_neg)) + "]"
 
     def get_short_name(self):
-        variables = self.get_vars()
+        variables = self.variables
         return self.name + "(" + ",".join (variables) + ")"
     def relax_action (self):
         new_a = deepcopy(self)
@@ -53,6 +61,13 @@ class Action:
             p.substitute(mapping)
         new_action.eff_neg = {d for d in new_action.eff_neg}
 
+        new_vars = []
+        for var in self.variables:
+            if var in mapping:
+                new_vars.append(mapping[var])
+            else:
+                new_vars.append(var)
+        new_action.variables = new_vars
         return new_action
 
 if __name__=="__main__":
@@ -61,7 +76,7 @@ if __name__=="__main__":
     eff_pos = {p("cl","b")}
     eff_neg = {p("on" , ["a", "b"]) , p("cl","a"), p("he")}
     
-    a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg)
+    a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg, variables=['a', 'b'])
     print (a)
     print (a.get_short_name())
     print (a.get_vars())

@@ -18,14 +18,14 @@ def get_problem_definition(filepath):
     pre_pos = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
     eff_pos = {p("cl","ob2"), p("hol","ob1"),}
     eff_neg = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
-    a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg)
+    a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg, variables=['ob1', 'ob2'])
     all_actions.append(a)
 
 
     pre_pos = {p("hol" , ["ob1"]) , p("cl","ob2")}
     eff_pos = {p("cl","ob1"), p("on", ["ob1" , "ob2"]), p("he")}
     eff_neg =  {p("hol" , ["ob1"]) , p("cl","ob2")}
-    a = Action("stack", pre_pos, pre_neg, eff_pos, eff_neg)
+    a = Action("stack", pre_pos, pre_neg, eff_pos, eff_neg, variables=['ob1', 'ob2'])
     all_actions.append(a)
 
 
