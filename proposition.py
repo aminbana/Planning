@@ -28,7 +28,10 @@ class Proposition:
         return self.__repr__()
 
 if __name__=="__main__":
-    print (Proposition("on", ["a","b"]))
+    a = Proposition("on", ["a","b" , "c"])
+    c = Proposition("on", ["a","b" , "c"])
+    b = Proposition("he")
+
     print (Proposition("on", ["a","b"]) == Proposition("clear", ["a"]))
     print (Proposition("on", ["a","b"]) == Proposition("on", ["a","b"]))
 

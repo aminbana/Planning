@@ -1,7 +1,7 @@
 from graphlayer import Graphlayer
 from goal import Goal
 from copy import deepcopy
-from utils import get_actions_short_names, count_actions_but_noops
+from myutils import get_actions_short_names, count_actions_but_noops
 import itertools
 
 
@@ -49,7 +49,7 @@ def extract_plan (action_layers, state_layers, n, goal:Goal):
             best_length = length
             best_plan = plan
     
-    return best_plan, best_length
+        return best_plan, best_length
 
             
     

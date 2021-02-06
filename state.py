@@ -1,5 +1,5 @@
 from proposition import Proposition as p
-from utils import convert_set_to_string_list
+from myutils import convert_set_to_string_list
 from goal import Goal
 from action import Action
 import itertools
@@ -22,21 +22,21 @@ class State:
         return "State" + ": " + ",".join(convert_set_to_string_list(self.propositions))
     
     def isGoal (self, g:Goal):
-        for p in g.propos_pos:
-            if p not in self.propositions:
-                return False
-        for p in g.propos_neg:
-            if p in self.propositions:
-                return False
+        if not g.propos_pos.issubset(self.propositions):
+            return False
+        
+        if not (len (g.propos_neg.intersection(self.propositions)) == 0):
+            return False
+        
         return True
     
     def isAppliable (self, a:Action):
-        for p in a.pre_pos:
-            if p not in self.propositions:
-                return False
-        for p in a.pre_neg:
-            if p in self.propositions:
-                return False
+        
+        if not a.pre_pos.issubset(self.propositions):
+            return False
+        
+        if not (len (a.pre_neg.intersection (self.propositions)) == 0):
+            return False
         return True
     
     def apply_unified_action(self, a:Action):
@@ -76,7 +76,7 @@ class State:
 
     def __eq__(self, other):
         if isinstance(other, State):
-            if len (self.propositions - other.propositions) == 0:
+            if self.propositions == other.propositions:
                 return True
         return False
 
@@ -96,20 +96,19 @@ if __name__=="__main__":
 
     pre_pos = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
     pre_neg = {}
-    eff_pos = {p("cl","ob2"), p("hol","obj2"),}
+    eff_pos = {p("cl","ob2"), p("hol","ob2"),}
     eff_neg = {p("on" , ["ob1", "ob2"]) , p("cl","ob1"), p("he")}
     
     a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg)
     
     unifications = s.get_all_unifications(a)
-
     print ("all possilbe unifications:" , unifications)
 
     for u in unifications:
         print ("after applying" , u , ":")
         print (s.isAppliable(a))
-        unified_action = deepcopy(a).substitute_and_copy(u)
-        print (unified_action)
+        unified_action = a.substitute_and_copy(u)
+        print (s.isAppliable(unified_action))
         s_new = s.apply_unified_action(unified_action)
         print ("new_state:" , s_new)
         print (s_new.isGoal(g))

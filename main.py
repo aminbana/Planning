@@ -4,13 +4,12 @@ from state import State
 from goal import Goal
 from plan import Plan
 from copy import deepcopy
-from utils import get_actions_short_names
+from myutils import get_actions_short_names
 from graphplan import graphplan
 
 def get_problem_definition(filepath):
     p_s0 = {p("cl","a"), p("he"), p("ot" , "b"), p("on", ["a","b"]), p("ot", "c"), p("cl", "c")}
     s0 = State(p_s0)
-
 
     all_actions = []
     pre_neg = []
@@ -52,6 +51,8 @@ def get_problem_definition(filepath):
 def main():
 
     all_actions, s0, goal = get_problem_definition("temp.txt")
+    print (get_actions_short_names (all_actions))
+    print (get_actions_short_names (s0.get_all_possible_actions(all_actions)))
     final_plan, success = forward_search(all_actions, s0, goal, [])
     if success:
         print(final_plan)

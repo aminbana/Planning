@@ -1,5 +1,5 @@
 from proposition import Proposition as p
-from utils import convert_set_to_string_list
+from myutils import convert_set_to_string_list
 from copy import deepcopy
 
 class Action:
@@ -17,13 +17,15 @@ class Action:
     def __repr__(self):
         variables = self.get_vars()
         return self.name + "(" + ",".join (variables) + ")" + ": pre:[" + ",".join(convert_set_to_string_list(self.pre_pos)) + "~,".join(convert_set_to_string_list(self.pre_neg)) + "]" +", eff:[" + ",".join(convert_set_to_string_list(self.eff_pos)) + " |  ~" + "~,".join(convert_set_to_string_list(self.eff_neg)) + "]"
+
     def get_short_name(self):
         variables = self.get_vars()
         return self.name + "(" + ",".join (variables) + ")"
     def relax_action (self):
-        self.eff_neg = set()
-        self.pre_neg = set()
-        return self
+        new_a = deepcopy(self)
+        new_a.eff_neg = set()
+        new_a.pre_neg = set()
+        return new_a
     
     def get_vars(self):
         variables = []
@@ -60,8 +62,9 @@ if __name__=="__main__":
     eff_neg = {p("on" , ["a", "b"]) , p("cl","a"), p("he")}
     
     a = Action("unstack", pre_pos, pre_neg, eff_pos, eff_neg)
-
-    print (a.get_vars())
     print (a)
+    print (a.get_short_name())
+    print (a.get_vars())
+    
     print (a.substitute_and_copy({"a":"obj1", "b":"obj2"}))
     
