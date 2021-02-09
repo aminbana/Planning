@@ -8,7 +8,7 @@ from myutils import get_actions_short_names
 from graphplan import graphplan
 
 def get_problem_definition(filepath):
-    p_s0 = {p("cl","a"), p("he"), p("ot" , "b"), p("on", ["a","b"]), p("ot", "c"), p("cl", "c")}
+    p_s0 = {p("cl","e"), p("ot" , "b"), p("on", ["a","b"]), p("ot", "c"), p("cl", "c"), p("cl", "d"), p("ot", "d") , p("on", ["e","a"]), p("hol", "x")}
     s0 = State(p_s0)
 
     all_actions = []
@@ -54,6 +54,9 @@ def main():
     print (get_actions_short_names (all_actions))
     print (get_actions_short_names (s0.get_all_possible_actions(all_actions)))
     final_plan, success = forward_search(all_actions, s0, goal, [])
+    from graphic import Graphic
+    g = Graphic()
+
     if success:
         print(final_plan)
     else:
@@ -62,8 +65,9 @@ def main():
     s = s0
     for action in final_plan.actions:
         print (action.get_short_name())
-        success, helpful_actions, heuristic = graphplan(s, all_actions, goal)
-        print (heuristic)
+        g.plot_state(s)
+        # success, helpful_actions, heuristic = graphplan(s, all_actions, goal)
+        # print (heuristic)
         s = s.apply_unified_action(action)
 
     # success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
@@ -72,6 +76,8 @@ def main():
     # else:
     #     print ("failed")
     # print (success, helpful_actions, heuristic)
+
+
 
 def forward_search (all_actions, s:State, goal:Goal, history_of_states, depth = 0):
 
@@ -97,3 +103,4 @@ def forward_search (all_actions, s:State, goal:Goal, history_of_states, depth = 
 
 
 main()
+
