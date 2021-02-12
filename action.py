@@ -13,7 +13,6 @@ class Action:
         if variables is None:
             self.variables = list (self.get_vars())
         else:
-            
             assert isinstance(variables, list) , "only lists are allowed"
             assert set (variables) == set (self.get_vars()), "variable names is incosistnet with action variables"
             self.variables = variables

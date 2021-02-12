@@ -17,7 +17,7 @@ class Graphic:
         self.bg_color = 230
         self.cube_size = 50
         self.horizontal_spacing = 80
-    def plot_plan (self, s0:State, plan:Plan, path_to_save = None, filename = None):
+    def plot_plan (self, s0:State, plan:Plan, path_to_save = None, filename = None, plot_result = True):
         canvases = []
         canvases.append(self.plot_state(s0))
         s = deepcopy(s0)
@@ -53,9 +53,10 @@ class Graphic:
         total_canvas = cv2.putText(total_canvas, "S0", (canvases[0].shape[1]//2 - 10, max_height - (self.cube_size//2)) , color=0, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8 , thickness=2)
         total_canvas = cv2.putText(total_canvas, "Goal", (last_x - horizontal_spacing - (canvases[-1].shape[1]//2) - 15, max_height - (self.cube_size//2)) , color=0, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8 , thickness=2)
 
-        plt.imshow(total_canvas)
-        plt.axis('off')
-        plt.show()
+        if plot_result:
+            plt.imshow(total_canvas)
+            plt.axis('off')
+            plt.show()
 
         if path_to_save is not None:
             try:
