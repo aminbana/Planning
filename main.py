@@ -58,7 +58,7 @@ def main():
     #all_actions, s0, goal = get_problem_definition("temp.txt")
     print (get_actions_short_names (all_actions))
     print (get_actions_short_names (s0.get_all_possible_actions(all_actions)))
-    final_plan, success = forward_search(all_actions, s0, goal, [])
+    final_plan, success = backward_search(all_actions, s0, goal, [])
     from graphic import Graphic
     g = Graphic()
 
@@ -74,7 +74,8 @@ def main():
         # success, helpful_actions, heuristic = graphplan(s, all_actions, goal)
         # print (heuristic)
         s = s.apply_unified_action(action)
-
+    g.plot_state(s)
+    
     # success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
     # if success:
     #     print ("succses, h=", heuristic, get_actions_short_names(helpful_actions))
@@ -106,6 +107,33 @@ def forward_search (all_actions, s:State, goal:Goal, history_of_states, depth = 
             return plan,True
     return None,False
 
+
+def backward_search (all_actions, s0:State, goal:Goal, history_of_states, depth = 0):
+
+    if s0.isGoal(goal):
+        plan = Plan()
+        return plan, True
+    
+    hist = deepcopy (history_of_states)
+    hist.append(goal)
+
+    posible_actions = goal.get_all_possible_backward_actions(all_actions, s0)
+    for a in posible_actions:
+        new_goal = goal.apply_inverse_unified_action(a)
+
+        repeated_state = False
+        for h_g in hist:
+            if new_goal.propos_pos.issubset(h_g.propos_pos) and new_goal.propos_neg.issubset(h_g.propos_neg):
+                repeated_state = True
+                break
+        if repeated_state:
+            continue
+            
+        plan , success = forward_search(all_actions, s0, new_goal, hist, depth+1)
+        if success:
+            plan.append_after(a)
+            return plan,True
+    return None,False
 
 main()
 
