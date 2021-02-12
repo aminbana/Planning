@@ -16,7 +16,7 @@ class Graphic:
         cube_size = 50
 
         propositions = s.propositions
-        on_table_objects = [p.vars[0] for p in propositions if p.name == "ot"]
+        on_table_objects = [p.vars[0] for p in propositions if p.name == "on-table"]
         stacks = deepcopy (on_table_objects)
         stacks = [[d] for d in stacks]
 
@@ -38,7 +38,7 @@ class Graphic:
         
         holding_obj = None
         for p in propositions:
-            if p.name == "hol":
+            if p.name == "holding":
                 holding_obj = p.vars[0]
         
         stacks.sort(key=sorter_func)
@@ -58,7 +58,7 @@ class Graphic:
             for stack in stacks:
                 for c in stack:
                     self.colors[c] = (np.random.randint(256), np.random.randint(256), np.random.randint(256))
-        print (self.colors)
+
         for i,stack in enumerate (stacks):
             for j,name in enumerate (stack):
                 p1 = ((2*i+1) * cube_size , height - (cube_size + j * cube_size))

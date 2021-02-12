@@ -26,7 +26,7 @@ class Graphlayer(State):
         return True
 
     def apply_unified_action(self, a:Action):
-        assert False, "not implemented"
+        return self.apply_unified_actions([a])
     
     def apply_unified_actions (self, actions):
         new_pros = set ()

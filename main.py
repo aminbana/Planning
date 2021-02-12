@@ -52,8 +52,9 @@ def get_problem_definition(filepath):
 def main():
     
     all_actions, predicates = read_domain('blocks-world/domain.txt')
+    print (predicates)
     s0, goal = read_problem('blocks-world/sussman-anomaly.txt', predicates)
-
+    print (all_actions)
     #all_actions, s0, goal = get_problem_definition("temp.txt")
     print (get_actions_short_names (all_actions))
     print (get_actions_short_names (s0.get_all_possible_actions(all_actions)))
@@ -62,7 +63,7 @@ def main():
     g = Graphic()
 
     if success:
-        print(final_plan)
+        print("final plan with forward search:" , final_plan)
     else:
         print("failed")
 
