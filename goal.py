@@ -20,7 +20,7 @@ class Goal:
         return self.__repr__()
     
     def __repr__(self):
-        return "GOAL: " + ",".join(convert_set_to_string_list(self.propos_pos)) + ", ~" + ",".join(convert_set_to_string_list(self.propos_neg))  
+        return "GOAL: " + ",".join(convert_set_to_string_list(self.propos_pos)) + ",~" + ",~".join(convert_set_to_string_list(self.propos_neg))  
 
     def __eq__(self, other):
         if isinstance(other, Goal):

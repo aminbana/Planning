@@ -216,9 +216,9 @@ def read_problem(path, predicates):
     
     assert(len(g_pos) == num_of_g)
     
-    print(num_of_objs)
-    print(s0)
-    print(goal)
+    # print(num_of_objs)
+    # print(s0)
+    # print(goal)
     
     
     return s0, goal
