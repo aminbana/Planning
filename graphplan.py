@@ -1,3 +1,4 @@
+from action import Action
 from graphlayer import Graphlayer
 from goal import Goal
 from copy import deepcopy
@@ -95,7 +96,18 @@ def graphplan(s0, all_action, goal:Goal):
 
         helpful_actions = [a for a in parallel_plan[0] if a.name != "noop"]
         heuristic = best_length
-        return True , helpful_actions, heuristic
+
+        unrelaxed_helpful_actions = []
+
+        for h in helpful_actions:
+            for a in all_action:
+                if h.name == a.name:
+                    mapping = {k:v for k,v in zip (a.variables, h.variables)}
+                    break
+
+            unrelaxed_helpful_actions.append(a.substitute_and_copy(mapping))
+
+        return True , unrelaxed_helpful_actions, heuristic
     else:
         return False , None, None
 

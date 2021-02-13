@@ -130,8 +130,8 @@ class Graphic:
             cv2.putText(canvas, holding_obj, p_text, color=0, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8 , thickness=2)
         canvas = cv2.line(canvas, (0,height - cube_size) , (width,height - cube_size) , color = 0 , thickness=1)
         
-        # plt.imshow(canvas)
-        # plt.show()
+        plt.imshow(canvas)
+        plt.show()
         return canvas
 
 

@@ -23,7 +23,7 @@ class Action:
 
     def __repr__(self):
         variables = self.variables
-        return self.name + "(" + ",".join (variables) + ")" + ": pre:[" + ",".join(convert_set_to_string_list(self.pre_pos)) + ",~".join(convert_set_to_string_list(self.pre_neg)) + "]" +", eff:[" + ",".join(convert_set_to_string_list(self.eff_pos)) + " |  ~" + "~,".join(convert_set_to_string_list(self.eff_neg)) + "]"
+        return self.name + "(" + ",".join (variables) + ")" + ": pre:[" + ",".join(convert_set_to_string_list(self.pre_pos)) + ",~".join(convert_set_to_string_list(self.pre_neg)) + "]" +", eff:[" + ",".join(convert_set_to_string_list(self.eff_pos)) + " |  ~" + ",~".join(convert_set_to_string_list(self.eff_neg)) + "]"
 
     def get_short_name(self):
         variables = self.variables

@@ -33,8 +33,8 @@ def extract_plan(all_level_actions, all_level_actions_father, plan):
 
 
 def unify_helpful_actions(state, helpful_actions):
-    unified_actions = state.get_all_possible_actions(helpful_actions)
-    return np.random.permutation(unified_actions).tolist()
+    # unified_actions = state.get_all_possible_actions(helpful_actions)
+    return np.random.permutation(helpful_actions).tolist()
 
 
 def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
@@ -54,6 +54,7 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
     all_level_actions_father = []
 
     
+
     better_h_exists = False
     
     while not better_h_exists:
@@ -76,7 +77,7 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
                 
                 new_s = old_s.apply_unified_action(act)
                 new_success, new_helpful_actions, new_h = graphplan(new_s, all_actions, goal)
-                
+
                 
                 if new_success:
                     all_actions_failed = False
