@@ -92,7 +92,7 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
                 
                 j += 1
                 
-                if new_h > heuristic:
+                if new_h < heuristic:
                     better_h_exists = True
                     break
         
