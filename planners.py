@@ -39,6 +39,10 @@ def unify_helpful_actions(state, helpful_actions):
 
 def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
 
+    
+    if s0.isGoal(goal):
+        return plan, True
+    
     posible_actions = s0.get_all_possible_actions(all_actions)
     success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
     
