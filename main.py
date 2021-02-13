@@ -8,7 +8,7 @@ parent_path = 'blocks-world/'
 domain_file_name = 'domain.txt'
 domain_path = parent_path + domain_file_name
 
-problem_file_name = 'sussman-anomaly.txt'
+problem_file_name = 'twelve-step.txt'
 problem_path = parent_path + problem_file_name
 
 all_actions, predicates = read_domain(domain_path)
@@ -18,7 +18,7 @@ print (goal)
 
 g = Graphic()
 
-final_plan, success = planner_ff(s0, all_actions, goal)
+final_plan, success = planner_ff(s0, all_actions, goal, enforced=False)
 
 if success:
     
