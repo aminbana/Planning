@@ -40,7 +40,7 @@ if __name__ == '__main__':
             return_list.append([])
             return_list.append(False)
 
-            th = multiprocessing.Process(target=thread_function, args=(planner, s0, all_actions, goal, return_list))
+            th = multiprocessing.Process(target=thread_function, args=(planner, s0, all_actions, goal, return_list, ))
 
             start_time = time.time()
             th.start()
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                         
             stop_time = time.time()
-
+            print ("return_list" , return_list)
             final_plan, success = return_list
 
             elapsed_time = 60
@@ -70,30 +70,3 @@ if __name__ == '__main__':
             print (reports)
     import pickle
     pickle.dump(reports, file=open( "Reports/report", "wb" ))
-
-
-    import numpy as np
-    import matplotlib.pyplot as plt
-
-    # data to plot
-    n_groups = len (problem_file_names)
-
-    # create plot
-    fig, ax = plt.subplots()
-    index = np.arange(n_groups)
-    bar_width = 0.3
-    opacity = 0.8
-
-    for i, (planner, planner_string) in enumerate (zip (planners, planner_strings)):
-        values = [reports[problem_file_name][planner_string][0] for problem_file_name in problem_file_names]    
-        plt.bar(index + bar_width * i, values, bar_width,alpha=opacity,label=planner_string)
-
-    plt.xlabel('Problem')
-    plt.ylabel('Running time')
-    plt.title('Runtime comparisan for different planners')
-    plt.xticks(index + bar_width - 0.05, problem_file_names)
-    plt.legend()
-
-    plt.tight_layout()
-    plt.show()
-

@@ -60,7 +60,7 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
         hist.append(s)
         s = s.apply_unified_action(new_action)
     
-    
+
     pos_count = np.random.randint(0,high=len(list (s.propositions)))
     
     pros_pos = set (random.choices(list (s.propositions), k=pos_count))
@@ -79,5 +79,10 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
 def get_bunch_of_problems(all_actions, s0,  count, init_seed = 2, max_length = 20):
     problems = []
     for c in range (count):
-        problems.append(generate_random_problem(s0, all_actions, seed=init_seed + c, max_length = max_length))
+        s0, goal = generate_random_problem(s0, all_actions, seed=init_seed + c, max_length = max_length)
+        if s0.isGoal(goal):
+            c -= 1
+            continue
+        problems.append((s0,goal))
+        
     return problems

@@ -25,7 +25,7 @@ n_groups = len (problem_file_names)
 # create plot
 fig, ax = plt.subplots()
 index = np.arange(n_groups)
-bar_width = 0.3
+bar_width = 0.2
 opacity = 0.8
 
 for i, planner_string in enumerate (planner_strings):
@@ -41,7 +41,8 @@ for i, planner_string in enumerate (planner_strings):
 plt.xlabel('Problem')
 plt.ylabel('Running time')
 plt.title('Runtime comparisan for different planners')
-plt.xticks(index + bar_width - 0.05, problem_file_names)
+
+plt.xticks(index + bar_width - 0.05, [s.split (".txt")[0] for s in problem_file_names])
 plt.legend()
 
 plt.tight_layout()
@@ -60,7 +61,7 @@ for i, planner_string in enumerate (planner_strings):
 plt.xlabel('Problem')
 plt.ylabel('plan length')
 plt.title('Plan length comparisan for different planners')
-plt.xticks(index + bar_width - 0.05, problem_file_names)
+plt.xticks(index + bar_width - 0.05, [s.split (".txt")[0] for s in problem_file_names])
 plt.legend()
 
 plt.tight_layout()

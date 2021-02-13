@@ -35,7 +35,7 @@ if __name__ == '__main__':
         
         for planner, planner_string in zip (planners, planner_strings):
             reports[max_length][planner_string] = []
-            
+            print ("planner:", planner_string)
             for problem in problems:
                 s0, goal = problem
                 manager = multiprocessing.Manager()
@@ -57,13 +57,16 @@ if __name__ == '__main__':
                     time.sleep(0.1)
                         
                 stop_time = time.time()
-
+                print ("return_list" , return_list)
                 final_plan, success = return_list
 
                 elapsed_time = 60
                 plan_len = 0
                 if success:
                     plan_len = len(final_plan.actions)
+                    if plan_len == 0:
+                        print (s0, goal, final_plan)
+
                 elapsed_time = stop_time - start_time
                 reports[max_length][planner_string].append ((elapsed_time , plan_len, success))
                 
