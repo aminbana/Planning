@@ -44,7 +44,7 @@ def forward_search (all_actions, s:State, goal:Goal, history_of_states, depth = 
     hist.append(s)
 
     posible_actions = s.get_all_possible_actions(all_actions)
-    # random.shuffle(posible_actions)
+    random.shuffle(posible_actions)
 
     for a in posible_actions:
         new_s = s.apply_unified_action(a)
@@ -72,7 +72,7 @@ def backward_search (all_actions, s0:State, goal:Goal, history_of_states, depth 
     hist.append(goal)
 
     posible_actions = goal.get_all_possible_backward_actions(all_actions, s0)
-    # random.shuffle(posible_actions)
+    random.shuffle(posible_actions)
     
     for a in posible_actions:
         new_goal = goal.apply_inverse_unified_action(a)

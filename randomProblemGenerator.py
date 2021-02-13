@@ -72,7 +72,7 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
 
     goal = Goal(pros_pos,pros_neg)
     
-    s0 = random.choices(hist , k = 1)[0]
+    s0 = hist[0] #random.choices(hist , k = 1)[0]
     
     return s0, goal
 

@@ -11,6 +11,8 @@ problem_path = parent_path + problem_file_name
 
 all_actions, predicates = read_domain(domain_path)
 s0, goal = read_problem(problem_path, predicates)
+print ("Initial", s0)
+print (goal)
 
 g = Graphic()
 
@@ -27,5 +29,5 @@ else:
     print(" ====================  final plan with FF search: ============================")
     print("failed to find any plan")
     print(" =============================================================================")
-    
+
 
