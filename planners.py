@@ -75,7 +75,6 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
                     break
                 
                 new_s = old_s.apply_unified_action(act)
-                posible_actions = new_s.get_all_possible_actions(all_actions)
                 new_success, new_helpful_actions, new_h = graphplan(new_s, all_actions, goal)
                 
                 
