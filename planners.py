@@ -5,6 +5,7 @@ from action import Action
 from plan import Plan
 from copy import deepcopy
 from myutils import get_actions_short_names
+import numpy as np
 import random
 
 
@@ -15,21 +16,104 @@ def planner_backward(s0:State, all_actions, goal:Goal):
     return backward_search (all_actions, s0, goal, [], max_length=30)
 
 
-def planner_ff(s0:State, all_actions, goal:Goal):
-    # ================================== write here hosein :) =================================
-    # you may use this as heuristic:
+def extract_plan(all_level_actions, all_level_actions_father, plan):
+    n_levels = len(all_level_actions)
     
-        # success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
-        # if success:
-        #     print ("succses, h=", heuristic, get_actions_short_names(helpful_actions))
-        # else:
-        #     print ("failed")
-        # print (success, helpful_actions, heuristic)
+    plan_ind = len(all_level_actions[-1]) - 1
+    
+    partial_plan = Plan()
+    for l in range(n_levels)[::-1]:
+        partial_plan.append_before(all_level_actions[l][plan_ind])
+        plan_ind = all_level_actions_father[l][plan_ind]
+        
+    for l in range(n_levels):
+        plan.append_after(partial_plan.actions[l])
+        
+    return plan
 
 
-    plan, success = forward_search (all_actions, s0, goal, [], max_length=30)
+def unify_helpful_actions(state, helpful_actions):
+    unified_actions = state.get_all_possible_actions(helpful_actions)
+    return np.random.permutation(unified_actions).tolist()
+
+
+def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan()):
+
+    posible_actions = s0.get_all_possible_actions(all_actions)
+    success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
+    
+    if not success:
+        return None, False
+    
+    
+    prev_level_states = [deepcopy(s0)]
+    prev_level_helpful_actions = [unify_helpful_actions(s0, helpful_actions)]
+    
+    
+    all_level_actions = []
+    all_level_actions_father = []
+
+    
+    better_h_exists = False
+    
+    while not better_h_exists:
+        cur_level_states = []
+        cur_level_actions = []
+        cur_level_actions_father = {}
+        
+        cur_level_helpful_actions = []
+        
+        all_actions_failed = True
+        
+        j = 0
+        for i, old_s in enumerate(prev_level_states):
+            if better_h_exists:
+                break
+            
+            for act in prev_level_helpful_actions[i]:
+                if better_h_exists:
+                    break
+                
+                new_s = old_s.apply_unified_action(act)
+                posible_actions = new_s.get_all_possible_actions(all_actions)
+                new_success, new_helpful_actions, new_h = graphplan(new_s, all_actions, goal)
+                
+                
+                if new_success:
+                    all_actions_failed = False
+                else:
+                    continue
+                
+                cur_level_states.append(new_s)
+                cur_level_actions.append(act)
+                cur_level_actions_father[j] = i
+                
+                cur_level_helpful_actions.append(unify_helpful_actions(new_s, new_helpful_actions))
+                
+                j += 1
+                
+                if new_h > heuristic:
+                    better_h_exists = True
+                    break
+        
+        prev_level_states = deepcopy(cur_level_states)
+        prev_level_helpful_actions = deepcopy(cur_level_helpful_actions)
+        
+        all_level_actions.append(cur_level_actions)
+        all_level_actions_father.append(cur_level_actions_father)
+        
+                    
+        if all_actions_failed:
+            print(':X  *** Dead-End! ***')
+            return None, False
+        
+        
+    if better_h_exists: 
+        cur_plan = extract_plan(all_level_actions, all_level_actions_father, plan)
+        plan, success = planner_ff(new_s, all_actions, goal, cur_plan)
+
     return plan, success
-    #==========================================================================================
+
 
 def forward_search (all_actions, s:State, goal:Goal, history_of_states, depth = 0, max_length = 20):
 
