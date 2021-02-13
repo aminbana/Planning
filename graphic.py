@@ -108,10 +108,10 @@ class Graphic:
         
         if self.colors is None:
             self.colors = {}
-            self.colors[holding_obj] = (np.random.randint(256), np.random.randint(256), np.random.randint(256))
+            self.colors[holding_obj] = (np.random.randint(20, 256), np.random.randint(20, 256), np.random.randint(20, 256))
             for stack in stacks:
                 for c in stack:
-                    self.colors[c] = (np.random.randint(256), np.random.randint(256), np.random.randint(256))
+                    self.colors[c] = (np.random.randint(20, 256), np.random.randint(20, 256), np.random.randint(20, 256))
 
         for i,stack in enumerate (stacks):
             for j,name in enumerate (stack):
