@@ -19,11 +19,11 @@ class Graphic:
         self.horizontal_spacing = 80
     def plot_plan (self, s0:State, plan:Plan, path_to_save = None, filename = None, plot_result = True):
         canvases = []
-        canvases.append(self.plot_state(s0))
+        canvases.append(self.plot_state(s0, plot_now = False))
         s = deepcopy(s0)
         for a in plan.actions:
             s = s.apply_unified_action(a)
-            canvases.append(self.plot_state(s))
+            canvases.append(self.plot_state(s, plot_now=False))
         
         max_height = max ([c.shape[0] for c in canvases])
         horizontal_spacing = self.horizontal_spacing
@@ -66,7 +66,7 @@ class Graphic:
 
             cv2.imwrite(path_to_save + filename + ".png" , total_canvas)
 
-    def plot_state(self, s:State,):
+    def plot_state(self, s:State, plot_now = True):
         cube_size = self.cube_size
 
         propositions = s.propositions
@@ -130,8 +130,9 @@ class Graphic:
             cv2.putText(canvas, holding_obj, p_text, color=0, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8 , thickness=2)
         canvas = cv2.line(canvas, (0,height - cube_size) , (width,height - cube_size) , color = 0 , thickness=1)
         
-        plt.imshow(canvas)
-        plt.show()
+        if plot_now:
+            plt.imshow(canvas)
+            plt.show()
         return canvas
 
 
