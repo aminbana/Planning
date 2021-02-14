@@ -15,6 +15,18 @@ def planner_forward(s0:State, all_actions, goal:Goal):
 def planner_backward(s0:State, all_actions, goal:Goal):
     return backward_search (all_actions, s0, goal, [], max_length=30)
 
+def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
+    
+    types = ['naive', 'enforced', 'modified_enforced']
+    assert(version in types)
+    
+    if version == 'naive':
+        return ff_search(s0, all_actions, goal, enforced=False, print_h=True)
+    elif version == 'enforced':
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=True, original_version=True)
+    elif version == 'modified_enforced':
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=True, original_version=False)
+
 
 def extract_plan(all_level_actions, all_level_actions_father, plan):
     n_levels = len(all_level_actions)
@@ -37,7 +49,8 @@ def unify_helpful_actions(state, helpful_actions):
     return np.random.permutation(helpful_actions).tolist()
 
 
-def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, print_h=False, history_of_states=[]):
+def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True,
+               print_h=True, original_version=True, history_of_states=[], plateau_max_level=100):
 
     
     if s0.isGoal(goal):
@@ -45,6 +58,9 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, pri
     
     possible_actions = s0.get_all_possible_actions(all_actions)
     success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
+    
+    hist = deepcopy(history_of_states)
+    hist.append(s0)
     
     if print_h:
         print('heuristic value:', heuristic)
@@ -60,8 +76,7 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, pri
         
         all_level_actions = []
         all_level_actions_father = []
-    
-        
+
     
         better_h_exists = False
         
@@ -101,9 +116,14 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, pri
                     
                     j += 1
                     
-                    if new_h < heuristic:
-                        better_h_exists = True
-                        break
+                    if original_version:
+                        if new_h < heuristic:
+                            better_h_exists = True
+                            break
+                    else:
+                        if new_h < heuristic or (new_h == heuristic and new_s not in hist):
+                            better_h_exists = True
+                            break
             
             prev_level_states = deepcopy(cur_level_states)
             prev_level_helpful_actions = deepcopy(cur_level_helpful_actions)
@@ -112,22 +132,21 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, pri
             all_level_actions_father.append(cur_level_actions_father)
             
                         
-            if all_actions_failed:
-                print('\n:X  *** Dead-End! ***\n')
+            if all_actions_failed or len(all_level_actions) > plateau_max_level:
+                print('\n:X  *** Failure! ***\n')
                 return None, False
             
             
         if better_h_exists: 
             cur_plan = extract_plan(all_level_actions, all_level_actions_father, plan)
-            plan, success = planner_ff(new_s, all_actions, goal, cur_plan, enforced=enforced, print_h=print_h)
+            plan, success = ff_search(new_s, all_actions, goal, cur_plan, enforced=enforced,
+                                      print_h=print_h, original_version=original_version)
             
     else: # simple hill climbing without enforce 
 
         random.shuffle(helpful_actions)
         random.shuffle(possible_actions)
         
-        hist = deepcopy(history_of_states)
-        hist.append(s0)
         
         cur_level_states = []
         cur_level_hvalues = []
@@ -175,13 +194,13 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, pri
                 cur_level_actions.append(act)
                         
         if all_actions_failed:
-            print('\n:X  *** Dead-End! ***\n')
+            print('\n:X  *** Failure! ***\n')
             return None, False
             
         act_ind = np.argmin(cur_level_hvalues)
         plan.append_after(cur_level_actions[act_ind])
         new_s = cur_level_states[act_ind]
-        plan, success = planner_ff(new_s, all_actions, goal, plan, enforced=enforced, print_h=print_h, history_of_states=hist)        
+        plan, success = ff_search(new_s, all_actions, goal, plan, enforced=enforced, print_h=print_h, history_of_states=hist)        
 
     return plan, success
 

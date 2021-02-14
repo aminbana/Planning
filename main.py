@@ -19,7 +19,7 @@ print()
 
 g = Graphic()
 
-final_plan, success = planner_ff(s0, all_actions, goal, enforced=True, print_h=True)
+final_plan, success = planner_ff(s0, all_actions, goal, 'modified_enforced')
 
 if success:
     print()
