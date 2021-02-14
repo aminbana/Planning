@@ -37,15 +37,18 @@ def unify_helpful_actions(state, helpful_actions):
     return np.random.permutation(helpful_actions).tolist()
 
 
-def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True):
+def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, print_h=False, history_of_states=[]):
 
     
     if s0.isGoal(goal):
         return plan, True
     
-    #possible_actions = s0.get_all_possible_actions(all_actions)
+    possible_actions = s0.get_all_possible_actions(all_actions)
     success, helpful_actions, heuristic = graphplan(s0, all_actions, goal)
     
+    if print_h:
+        print('heuristic value:', heuristic)
+        
     if not success:
         return None, False
     
@@ -110,19 +113,22 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True):
             
                         
             if all_actions_failed:
-                print(':X  *** Dead-End! ***')
+                print('\n:X  *** Dead-End! ***\n')
                 return None, False
             
             
         if better_h_exists: 
             cur_plan = extract_plan(all_level_actions, all_level_actions_father, plan)
-            plan, success = planner_ff(new_s, all_actions, goal, cur_plan, enforced)
+            plan, success = planner_ff(new_s, all_actions, goal, cur_plan, enforced=enforced, print_h=print_h)
             
     else: # simple hill climbing without enforce 
 
         random.shuffle(helpful_actions)
+        random.shuffle(possible_actions)
         
-    
+        hist = deepcopy(history_of_states)
+        hist.append(s0)
+        
         cur_level_states = []
         cur_level_hvalues = []
         cur_level_actions = []
@@ -134,9 +140,10 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True):
         for act in helpful_actions:
             
             new_s = s0.apply_unified_action(act)
-            #possible_actions = new_s.get_all_possible_actions(all_actions)
-            new_success, new_helpful_actions, new_h = graphplan(new_s, all_actions, goal)
+            new_success, _, new_h = graphplan(new_s, all_actions, goal)
     
+            if new_s in hist:
+                continue
                 
             if new_success:
                 all_actions_failed = False
@@ -149,16 +156,32 @@ def planner_ff(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True):
             cur_level_actions.append(act)
                 
             
-            
+        if all_actions_failed:
+            for act in possible_actions:
+                new_s = s0.apply_unified_action(act)
+                new_success, _, new_h = graphplan(new_s, all_actions, goal)
+        
+                if new_s in hist:
+                    continue
+                    
+                if new_success:
+                    all_actions_failed = False
+                else:
+                    continue
+        
+                    
+                cur_level_states.append(new_s)
+                cur_level_hvalues.append(new_h)
+                cur_level_actions.append(act)
                         
         if all_actions_failed:
-            print(':X  *** Dead-End! ***')
+            print('\n:X  *** Dead-End! ***\n')
             return None, False
             
         act_ind = np.argmin(cur_level_hvalues)
         plan.append_after(cur_level_actions[act_ind])
         new_s = cur_level_states[act_ind]
-        plan, success = planner_ff(new_s, all_actions, goal, plan)        
+        plan, success = planner_ff(new_s, all_actions, goal, plan, enforced=enforced, print_h=print_h, history_of_states=hist)        
 
     return plan, success
 
