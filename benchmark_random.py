@@ -5,6 +5,8 @@ import time
 import multiprocessing
 from randomProblemGenerator import get_bunch_of_problems
 
+max_time_limit = 200
+
 parent_path = 'blocks-world/'
 domain_file_name = 'domain.txt'
 domain_path = parent_path + domain_file_name
@@ -52,7 +54,7 @@ if __name__ == '__main__':
                 while True:
                     if not th.is_alive():
                         break
-                    elif time.time() - start_time > 60:
+                    elif time.time() - start_time > max_time_limit:
                         th.terminate()
                     time.sleep(0.1)
                         
@@ -60,7 +62,7 @@ if __name__ == '__main__':
                 print ("return_list" , return_list)
                 final_plan, success = return_list
 
-                elapsed_time = 60
+                elapsed_time = max_time_limit
                 plan_len = 0
                 if success:
                     plan_len = len(final_plan.actions)

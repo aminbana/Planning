@@ -16,13 +16,13 @@ def planner_backward(s0:State, all_actions, goal:Goal):
     return backward_search (all_actions, s0, goal, [], max_length=30)
 
 def planner_ff_modified_enforced(s0:State, all_actions, goal:Goal):
-    planner_ff(s0, all_actions, goal, version='modified_enforced')
+    return planner_ff(s0, all_actions, goal, version='modified_enforced')
 
 def planner_ff_enforced(s0:State, all_actions, goal:Goal):
-    planner_ff(s0, all_actions, goal, version='enforced')
+    return planner_ff(s0, all_actions, goal, version='enforced')
 
 def planner_ff_naive(s0:State, all_actions, goal:Goal):
-    planner_ff(s0, all_actions, goal, version='naive')
+    return planner_ff(s0, all_actions, goal, version='naive')
 
 def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
     
@@ -30,11 +30,11 @@ def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
     assert(version in types)
     
     if version == 'naive':
-        return ff_search(s0, all_actions, goal, enforced=False, print_h=True)
+        return ff_search(s0, all_actions, goal, enforced=False, print_h=False)
     elif version == 'enforced':
-        return ff_search(s0, all_actions, goal, enforced=True, print_h=True, original_version=True)
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=False, original_version=True)
     elif version == 'modified_enforced':
-        return ff_search(s0, all_actions, goal, enforced=True, print_h=True, original_version=False)
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=False, original_version=False)
 
 
 def extract_plan(all_level_actions, all_level_actions_father, plan):
@@ -59,7 +59,7 @@ def unify_helpful_actions(state, helpful_actions):
 
 
 def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True,
-               print_h=True, original_version=True, history_of_states=[], plateau_max_level=100):
+               print_h=False, original_version=True, history_of_states=[], plateau_max_level=100):
 
     
     if s0.isGoal(goal):

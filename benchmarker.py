@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
         all_actions, predicates = read_domain(domain_path)
         s0, goal = read_problem(problem_path, predicates)
-
+        
         g = Graphic()
         reports[problem_file_name] = {}
         for planner, planner_string in zip (planners, planner_strings):
