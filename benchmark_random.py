@@ -1,6 +1,6 @@
 
 from file_io import read_domain, read_problem
-from planners import planner_ff, planner_backward, planner_forward
+from planners import planner_ff, planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive
 import time
 import multiprocessing
 from randomProblemGenerator import get_bunch_of_problems
@@ -15,8 +15,8 @@ problem_path = parent_path + base_problem_file_names
 all_actions, predicates = read_domain(domain_path)
 base_s0, _ = read_problem(problem_path, predicates)
 
-planners = [planner_ff, planner_backward, planner_forward]
-planner_strings = ["ff", "backward", "forward"]
+planners = [planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
+planner_strings = ["backward", "forward", "ff_modified_enforced", "ff_enforced", "ff_naive"]
 
 reports = {}
 

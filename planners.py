@@ -15,6 +15,15 @@ def planner_forward(s0:State, all_actions, goal:Goal):
 def planner_backward(s0:State, all_actions, goal:Goal):
     return backward_search (all_actions, s0, goal, [], max_length=30)
 
+def planner_ff_modified_enforced(s0:State, all_actions, goal:Goal):
+    planner_ff(s0, all_actions, goal, version='modified_enforced')
+
+def planner_ff_enforced(s0:State, all_actions, goal:Goal):
+    planner_ff(s0, all_actions, goal, version='enforced')
+
+def planner_ff_naive(s0:State, all_actions, goal:Goal):
+    planner_ff(s0, all_actions, goal, version='naive')
+
 def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
     
     types = ['naive', 'enforced', 'modified_enforced']
