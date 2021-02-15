@@ -19,21 +19,27 @@ def planner_ff_modified_enforced(s0:State, all_actions, goal:Goal):
     return planner_ff(s0, all_actions, goal, version='modified_enforced')
 
 def planner_ff_probabilistic_modified_enforced(s0:State, all_actions, goal:Goal):
-    return planner_ff(s0, all_actions, goal, version='modified_enforced', prob=0.4)
+    return planner_ff(s0, all_actions, goal, version='probabilistic_modified_enforced')
 
 def planner_ff_enforced(s0:State, all_actions, goal:Goal):
     return planner_ff(s0, all_actions, goal, version='enforced')
 
-def planner_ff_naive(s0:State, all_actions, goal:Goal):
-    return planner_ff(s0, all_actions, goal, version='naive')
+def planner_ff_naive_greedy(s0:State, all_actions, goal:Goal):
+    return planner_ff(s0, all_actions, goal, version='naive_greedy')
+
+def planner_ff_naive_bestchild(s0:State, all_actions, goal:Goal):
+    return planner_ff(s0, all_actions, goal, version='naive_bestchild')
+
 
 def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced', print_h=False):
     
-    types = ['naive', 'enforced', 'modified_enforced', 'probabilistic_modified_enforced']
+    types = ['naive_greedy', 'naive_bestchild', 'enforced', 'modified_enforced', 'probabilistic_modified_enforced']
     assert(version in types)
     
-    if version == 'naive':
-        return ff_search(s0, all_actions, goal, enforced=False, print_h=print_h)
+    if version == 'naive_greedy':
+        return ff_search(s0, all_actions, goal, enforced=False, print_h=print_h, naive_greedy=True)
+    elif version == 'naive_bestchild':
+        return ff_search(s0, all_actions, goal, enforced=False, print_h=print_h, naive_greedy=False)
     elif version == 'enforced':
         return ff_search(s0, all_actions, goal, enforced=True, print_h=print_h, original_version=True)
     elif version == 'modified_enforced':
@@ -63,7 +69,7 @@ def unify_helpful_actions(state, helpful_actions):
     return np.random.permutation(helpful_actions).tolist()
 
 
-def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, print_h=False, 
+def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, print_h=False, naive_greedy=True,
               original_version=True, history_of_states=[], plateau_max_level=100, prob=None):
 
     
@@ -156,7 +162,7 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, prin
             
         if better_h_exists: 
             cur_plan = extract_plan(all_level_actions, all_level_actions_father, plan)
-            plan, success = ff_search(new_s, all_actions, goal, cur_plan, enforced=enforced,
+            plan, success = ff_search(new_s, all_actions, goal, cur_plan, enforced=enforced, plateau_max_level=plateau_max_level,
                                       print_h=print_h, original_version=original_version, prob=prob)
             
     else: # simple hill climbing without enforce 
@@ -177,22 +183,35 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, prin
             
             new_s = s0.apply_unified_action(act)
             new_success, _, new_h = graphplan(new_s, all_actions, goal)
-    
-            if new_s in hist:
-                continue
-                
-            if new_success:
-                all_actions_failed = False
+
+            if naive_greedy:
+                if not new_success:
+                    continue
+                print(new_h)
+                if new_h < heuristic:
+                    
+                    cur_level_states.append(new_s)
+                    cur_level_hvalues.append(new_h)
+                    cur_level_actions.append(act)
+                    all_actions_failed = False
+                    break
+                    
             else:
-                continue
-    
                 
-            cur_level_states.append(new_s)
-            cur_level_hvalues.append(new_h)
-            cur_level_actions.append(act)
+                if new_s in hist:
+                    continue
+                    
+                if new_success:
+                    all_actions_failed = False
+                else:
+                    continue
+
+                cur_level_states.append(new_s)
+                cur_level_hvalues.append(new_h)
+                cur_level_actions.append(act)
                 
             
-        if all_actions_failed:
+        if all_actions_failed and not naive_greedy:
             for act in possible_actions:
                 new_s = s0.apply_unified_action(act)
                 new_success, _, new_h = graphplan(new_s, all_actions, goal)
@@ -214,10 +233,15 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, prin
             print('\n:X  *** Failure! ***\n')
             return None, False
             
-        act_ind = np.argmin(cur_level_hvalues)
+        if naive_greedy:
+            act_ind = -1
+        else:
+            act_ind = np.argmin(cur_level_hvalues)
+            
         plan.append_after(cur_level_actions[act_ind])
         new_s = cur_level_states[act_ind]
-        plan, success = ff_search(new_s, all_actions, goal, plan, enforced=enforced, print_h=print_h, history_of_states=hist)        
+        plan, success = ff_search(new_s, all_actions, goal, plan, enforced=enforced, naive_greedy=naive_greedy,
+                                  print_h=print_h, history_of_states=hist)        
 
     return plan, success
 
