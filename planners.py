@@ -18,24 +18,30 @@ def planner_backward(s0:State, all_actions, goal:Goal):
 def planner_ff_modified_enforced(s0:State, all_actions, goal:Goal):
     return planner_ff(s0, all_actions, goal, version='modified_enforced')
 
+def planner_ff_probabilistic_modified_enforced(s0:State, all_actions, goal:Goal):
+    return planner_ff(s0, all_actions, goal, version='modified_enforced', prob=0.4)
+
 def planner_ff_enforced(s0:State, all_actions, goal:Goal):
     return planner_ff(s0, all_actions, goal, version='enforced')
 
 def planner_ff_naive(s0:State, all_actions, goal:Goal):
     return planner_ff(s0, all_actions, goal, version='naive')
 
-def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
+def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced', print_h=False):
     
-    types = ['naive', 'enforced', 'modified_enforced']
+    types = ['naive', 'enforced', 'modified_enforced', 'probabilistic_modified_enforced']
     assert(version in types)
     
     if version == 'naive':
-        return ff_search(s0, all_actions, goal, enforced=False, print_h=False)
+        return ff_search(s0, all_actions, goal, enforced=False, print_h=print_h)
     elif version == 'enforced':
-        return ff_search(s0, all_actions, goal, enforced=True, print_h=False, original_version=True)
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=print_h, original_version=True)
     elif version == 'modified_enforced':
-        return ff_search(s0, all_actions, goal, enforced=True, print_h=False, original_version=False)
-
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=print_h, original_version=False)
+    elif version == 'probabilistic_modified_enforced':
+        return ff_search(s0, all_actions, goal, enforced=True, print_h=print_h, original_version=False, prob=0.4)
+    
+    
 def extract_plan(all_level_actions, all_level_actions_father, plan):
     n_levels = len(all_level_actions)
     
@@ -57,8 +63,8 @@ def unify_helpful_actions(state, helpful_actions):
     return np.random.permutation(helpful_actions).tolist()
 
 
-def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True,
-               print_h=False, original_version=True, history_of_states=[], plateau_max_level=100):
+def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, print_h=False, 
+              original_version=True, history_of_states=[], plateau_max_level=100, prob=None):
 
     
     if s0.isGoal(goal):
@@ -128,11 +134,14 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True,
                         if new_h < heuristic:
                             better_h_exists = True
                             break
-                    else:
+                    elif prob == None:
                         if new_h < heuristic or (new_h == heuristic and new_s not in hist):
                             better_h_exists = True
                             break
-            
+                    else:
+                        if new_h < heuristic or (new_h == heuristic and new_s not in hist and np.random.rand() < prob):
+                            better_h_exists = True
+                            break
             prev_level_states = deepcopy(cur_level_states)
             prev_level_helpful_actions = deepcopy(cur_level_helpful_actions)
             
@@ -148,7 +157,7 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True,
         if better_h_exists: 
             cur_plan = extract_plan(all_level_actions, all_level_actions_father, plan)
             plan, success = ff_search(new_s, all_actions, goal, cur_plan, enforced=enforced,
-                                      print_h=print_h, original_version=original_version)
+                                      print_h=print_h, original_version=original_version, prob=prob)
             
     else: # simple hill climbing without enforce 
 
