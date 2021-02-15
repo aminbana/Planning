@@ -17,8 +17,8 @@ problem_path = parent_path + base_problem_file_names
 all_actions, predicates = read_domain(domain_path)
 base_s0, _ = read_problem(problem_path, predicates)
 
-planners = [planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
-planner_strings = ["backward", "forward", "ff_modified_enforced", "ff_enforced", "ff_naive"]
+planners = [planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
+planner_strings = ["ff_modified_enforced", "ff_enforced", "ff_naive"]
 
 reports = {}
 
@@ -40,6 +40,8 @@ if __name__ == '__main__':
             print ("planner:", planner_string)
             for problem in problems:
                 s0, goal = problem
+                final_plan, success = planner(s0, all_actions, goal)
+                print (1/0)
                 manager = multiprocessing.Manager()
                 return_list = manager.list()
                 return_list.append([])
@@ -61,7 +63,7 @@ if __name__ == '__main__':
                 stop_time = time.time()
                 print ("return_list" , return_list)
                 final_plan, success = return_list
-
+                print ()
                 elapsed_time = max_time_limit
                 plan_len = 0
                 if success:

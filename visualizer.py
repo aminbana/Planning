@@ -1,8 +1,7 @@
 import pickle
 reports = pickle.load(file=open( "Reports/report", "rb" ))
-reports_random = pickle.load(file=open( "Reports/report_random", "rb" ))
+planner_strings = list (reports[list (reports.keys())[0]].keys())
 
-planner_strings = ["ff", "backward", "forward"]
 
 # import numpy as np
 # import matplotlib.pyplot as plt
@@ -25,7 +24,7 @@ n_groups = len (problem_file_names)
 # create plot
 fig, ax = plt.subplots()
 index = np.arange(n_groups)
-bar_width = 0.2
+bar_width = 0.12
 opacity = 0.8
 
 for i, planner_string in enumerate (planner_strings):
@@ -68,6 +67,8 @@ plt.tight_layout()
 plt.show()
 
 
+reports_random = pickle.load(file=open( "Reports/report_random", "rb" ))
+planner_strings = list (reports_random[list (reports_random.keys())[0]].keys())
 for i, planner_string in enumerate (planner_strings):
     time_values = []
     length_values = []

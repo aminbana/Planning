@@ -36,7 +36,6 @@ def planner_ff(s0:State, all_actions, goal:Goal, version='modified_enforced'):
     elif version == 'modified_enforced':
         return ff_search(s0, all_actions, goal, enforced=True, print_h=False, original_version=False)
 
-
 def extract_plan(all_level_actions, all_level_actions_father, plan):
     n_levels = len(all_level_actions)
     
