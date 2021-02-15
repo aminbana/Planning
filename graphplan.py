@@ -62,6 +62,7 @@ def graphplan(s0, all_action, goal:Goal):
     state_layers = []
     
     relaxed_actions = [a.relax_action() for a in deepcopy(all_action)]
+    goal = goal.relax_goal()
 
     for n in range(1000000):
         
@@ -113,5 +114,14 @@ def graphplan(s0, all_action, goal:Goal):
 
             
     
+if __name__=="__main__":
+    from randomProblemGenerator import get_sample_problem_definition
+    from proposition import Proposition as p
+    from state import State
+    all_actions, s0, goal = get_sample_problem_definition(None)
+    goal = Goal([],[p("on", ["a","b"])])
 
+    p_s0 = {p("cl","a"), p("ot" , "d"), p("on", ["a","b"]),p("on", ["b","c"]), p("on", ["c","d"])}
+    s0 = State(p_s0)
+    success , unrelaxed_helpful_actions, heuristic = graphplan(s0, all_actions, goal)
 

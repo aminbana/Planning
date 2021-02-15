@@ -40,8 +40,11 @@ if __name__ == '__main__':
             print ("planner:", planner_string)
             for problem in problems:
                 s0, goal = problem
-                final_plan, success = planner(s0, all_actions, goal)
-                print (1/0)
+                # print ("****** s0", s0)
+                # print ("********* ", goal)
+                # print (s0.isGoal(goal))
+                # final_plan, success = planner(s0, all_actions, goal)
+                # print (1/0)
                 manager = multiprocessing.Manager()
                 return_list = manager.list()
                 return_list.append([])

@@ -61,7 +61,7 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
         s = s.apply_unified_action(new_action)
     
 
-    pos_count = np.random.randint(0,high=len(list (s.propositions)))
+    pos_count = np.random.randint(1,high=len(list (s.propositions)))
     
     pros_pos = set (random.choices(list (s.propositions), k=pos_count))
     

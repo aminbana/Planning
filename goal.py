@@ -1,3 +1,4 @@
+from copy import deepcopy
 from proposition import Proposition as p
 from myutils import convert_set_to_string_list
 from action import Action
@@ -28,6 +29,11 @@ class Goal:
                 return True
         return False
     
+    def relax_goal(self):
+        new_goal = deepcopy(self)
+        new_goal.propos_neg = set()
+        return new_goal
+        
     def isBackwardAppliable (self, a:Action):
         if len (a.eff_pos.intersection(self.propos_neg)) != 0 or len (a.eff_neg.intersection(self.propos_pos)) != 0:
             return False
