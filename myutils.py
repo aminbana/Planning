@@ -15,7 +15,11 @@ def count_actions_but_noops(actions):
 
 def print_results(final_plan, success, time=None, standard_print=True):
 
-    if not standard_print:
+    if standard_print:
+        if success:
+            for i, a in enumerate(final_plan.actions):
+                print(str(i) + ': (' + a.name, ' '.join(a.get_vars()) + ')')
+    else:
         if success:
             print()
             print('elapsed time (s):', str(round(time, 4)), ', length of plan:', len(final_plan.actions))
@@ -29,7 +33,3 @@ def print_results(final_plan, success, time=None, standard_print=True):
             print(" ====================  final plan with FF search: ============================")
             print("failed to find any plan")
             print(" =============================================================================")
-    else:
-        if success:
-            for i, a in enumerate(final_plan.actions):
-                print(str(i) + ': (' + a.name, ' '.join(a.get_vars()) + ')')
