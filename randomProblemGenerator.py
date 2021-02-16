@@ -80,7 +80,7 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
     random.seed(seed)
     np.random.seed(seed)
 
-    plan_length = np.random.randint(low = 1, high = max_length)
+    plan_length = max_length #np.random.randint(low = 1, high = max_length)
     hist = []
     
     for i in range (plan_length):
@@ -107,10 +107,32 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
     
     return s0, goal
 
-def get_bunch_of_problems(all_actions, s0,  count, init_seed = 2, max_length = 20):
+def generate_flat_n_cubes(n = 5):
+    assert n >= 2
+    propositions = []
+    
+    objects = ["a"+str(i) for i in range (n)]
+
+    propositions.append(p("arm-empty"))
+    
+    for i in range (n):
+        propositions.append(p("clear", objects[i]))    
+        propositions.append(p("on-table",[objects[i]]))
+        
+    
+    
+    s0 = State(propositions)
+    
+    return s0
+
+
+def get_bunch_of_problems(all_actions,  count, init_seed = 2, max_length = 20):
     problems = []
+    s0 = generate_flat_n_cubes()
+    from copy import deepcopy
+    
     for c in range (count):
-        s0, goal = generate_random_problem(s0, all_actions, seed=init_seed + c, max_length = max_length)
+        s0, goal = generate_random_problem(deepcopy (s0), all_actions, seed=init_seed + c, max_length = max_length)
         if s0.isGoal(goal):
             c -= 1
             continue
