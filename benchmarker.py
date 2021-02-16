@@ -1,8 +1,9 @@
 
-
 from graphic import Graphic
 from file_io import read_domain, read_problem
-from planners import planner_ff, planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive
+from planners import planner_backward, planner_forward, planner_ff_probabilistic_modified_enforced
+from planners import planner_ff_modified_enforced, planner_ff_enforced
+from planners import planner_ff_naive_greedy, planner_ff_naive_bestchild
 import time
 import multiprocessing
 
@@ -14,8 +15,13 @@ domain_path = parent_path + domain_file_name
 
 problem_file_names = ["simple.txt", "sussman-anomaly.txt", "reversal4.txt", "twelve-step.txt", "large-a.txt"]
 
-planners = [planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
-planner_strings = ["backward", "forward", "ff_modified_enforced", "ff_enforced", "ff_naive"]
+planners = [planner_backward, planner_forward, planner_ff_probabilistic_modified_enforced,
+            planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive_greedy,
+            planner_ff_naive_bestchild]
+
+planner_strings = ["backward", "forward", "ff_probabilistic_modified_enforced",
+                   "ff_modified_enforced", "ff_enforced", "ff_naive_greedy",
+                   "ff_naive_bestchild"]
 
 reports = {}
 
