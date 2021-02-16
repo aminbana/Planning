@@ -97,9 +97,11 @@ def generate_random_problem (s:State, all_actions, seed = 15, max_length = 20):
     all_negative_propositions = set ([propos for st in hist for propos in st.propositions if propos not in s.propositions])
     neg_count = np.random.randint(0,high=len(list (all_negative_propositions)))
 
-    pros_neg = set (random.choices(list (all_negative_propositions), k=neg_count))
+    # pros_neg = set (random.choices(list (all_negative_propositions), k=neg_count))
 
-    goal = Goal(pros_pos,pros_neg)
+    # goal = Goal(pros_pos,pros_neg)
+    
+    goal = Goal(hist[-1].propositions, {})
     
     s0 = hist[0] #random.choices(hist , k = 1)[0]
     

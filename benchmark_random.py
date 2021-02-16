@@ -1,6 +1,6 @@
 
 from file_io import read_domain, read_problem
-from planners import planner_backward, planner_forward, planner_ff_probabilistic_modified_enforced
+from planners import planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_probabilistic_modified_enforced, planner_ff_naive_greedy, planner_ff_naive_bestchild
 from planners import planner_ff_modified_enforced, planner_ff_enforced
 from planners import planner_ff_naive_greedy, planner_ff_naive_bestchild
 import time
@@ -13,15 +13,19 @@ parent_path = 'blocks-world/'
 domain_file_name = 'domain.txt'
 domain_path = parent_path + domain_file_name
 
-base_problem_file_names = "reversal4.txt"
+base_problem_file_names = "twelve-step.txt"
 problem_path = parent_path + base_problem_file_names
 
 all_actions, predicates = read_domain(domain_path)
 base_s0, _ = read_problem(problem_path, predicates)
 
-planners = [planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive_greedy]
-planner_strings = ["ff_modified_enforced", "ff_enforced", "ff_naive_greedy"]
+planners = [planner_backward, planner_forward, planner_ff_probabilistic_modified_enforced,
+            planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive_greedy,
+            planner_ff_naive_bestchild]
 
+planner_strings = ["backward", "forward", "ff_probabilistic_modified_enforced",
+                   "ff_modified_enforced", "ff_enforced", "ff_naive_greedy",
+                   "ff_naive_bestchild"]
 reports = {}
 
 def thread_function(planner, s0, all_actions, goal, queue):
@@ -30,10 +34,10 @@ def thread_function(planner, s0, all_actions, goal, queue):
     queue[1] = success
 
 if __name__ == '__main__':
-    for max_length in range(5, 100, 10):
+    for max_length in range(5, 40, 10):
         print ("Solving problems with length" , max_length , "...")
         
-        problems = get_bunch_of_problems(all_actions, base_s0, count=5, max_length=max_length)
+        problems = get_bunch_of_problems(all_actions, base_s0, count=2, max_length=max_length)
 
         reports[max_length] = {}
         
