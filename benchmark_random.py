@@ -13,11 +13,8 @@ parent_path = 'blocks-world/'
 domain_file_name = 'domain.txt'
 domain_path = parent_path + domain_file_name
 
-base_problem_file_names = "twelve-step.txt"
-problem_path = parent_path + base_problem_file_names
-
 all_actions, predicates = read_domain(domain_path)
-base_s0, _ = read_problem(problem_path, predicates)
+
 
 planners = [planner_backward, planner_forward, planner_ff_probabilistic_modified_enforced,
             planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive_greedy,
@@ -34,17 +31,17 @@ def thread_function(planner, s0, all_actions, goal, queue):
     queue[1] = success
 
 if __name__ == '__main__':
-    for max_length in range(25, 30, 10):
+    for max_length in range(15, 20, 10):
         print ("Solving problems with length" , max_length , "...")
         
-        problems = get_bunch_of_problems(all_actions, base_s0, count=10, max_length=max_length)
+        problems = get_bunch_of_problems(all_actions, count=2, max_length=max_length)
 
         reports[max_length] = {}
         
         for planner, planner_string in zip (planners, planner_strings):
             reports[max_length][planner_string] = {}
             print ("planner:", planner_string)
-            for repeats in range (5):
+            for repeats in range (2):
                 reports[max_length][planner_string][repeats] = []
                 for problem in problems:
                     s0, goal = problem
