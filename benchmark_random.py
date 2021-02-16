@@ -34,10 +34,10 @@ def thread_function(planner, s0, all_actions, goal, queue):
     queue[1] = success
 
 if __name__ == '__main__':
-    for max_length in range(5, 40, 10):
+    for max_length in range(25, 30, 10):
         print ("Solving problems with length" , max_length , "...")
         
-        problems = get_bunch_of_problems(all_actions, base_s0, count=2, max_length=max_length)
+        problems = get_bunch_of_problems(all_actions, base_s0, count=10, max_length=max_length)
 
         reports[max_length] = {}
         

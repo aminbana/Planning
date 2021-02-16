@@ -1,5 +1,6 @@
 
 
+from state import State
 from randomProblemGenerator import reversal_n_problem
 from graphic import Graphic
 from file_io import read_domain, read_problem
@@ -31,7 +32,7 @@ def thread_function(planner, s0, all_actions, goal, queue):
 
 if __name__ == '__main__':
     all_actions, predicates = read_domain(domain_path)
-    for n in range(2,10):
+    for n in range(6,10):
         
         problem_file_name = f"reversal_{n}"
 
@@ -39,7 +40,8 @@ if __name__ == '__main__':
         s0, goal = reversal_n_problem(n)
                 
         g = Graphic()
-        
+        g.plot_state(s0)
+        g.plot_state(State(goal.propos_pos))
         reports[problem_file_name] = {}
         for planner, planner_string in zip (planners, planner_strings):
             reports[problem_file_name][planner_string] = {}

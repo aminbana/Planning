@@ -1,51 +1,74 @@
 import pickle
-# reports = pickle.load(file=open( "Reports/report", "rb" ))
-# planner_strings = list (reports[list (reports.keys())[0]].keys())
-
-
-# # import numpy as np
-# # import matplotlib.pyplot as plt
-# # for i, planner_string in enumerate (planner_strings): 
-# #     values = [reports[max_length][planner_string][0][0] for max_length in range(5, 100, 10)]
-# #     print (values)
-# #     plt.plot (values, label = planner_string)
-# # plt.legend()
-# # plt.show ()
-
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.core.fromnumeric import repeat
 
-# # data to plot
+reports = pickle.load(file=open( "Reports/report_reversal", "rb" ))
+planner_strings = list (reports[list (reports.keys())[0]].keys())
 
-# problem_file_names = reports.keys()
+problem_file_names = reports.keys()
 
-# n_groups = len (problem_file_names)
+for i, planner_string in enumerate (planner_strings):
+    if planner_string == "ff_naive_greedy":
+        continue
+    
+    values = []
+    names = []
+    for problem_file_name in problem_file_names:
+        times = list (reports[problem_file_name][planner_string].values())
+        times = [t[0] for t in times]
+        mean = sum (times) / len (times)
+            
+        values.append(mean)
+        names.append(problem_file_name)
+    plt.plot (names, values, label = planner_string)
+plt.legend()
+plt.xlabel("problem name")
+plt.ylabel("elapsed time (s)")
+plt.title("runtime comparison on reversal problem")
+plt.ylim([0,100])
+plt.show()
+    
 
-# # create plot
-# fig, ax = plt.subplots()
-# index = np.arange(n_groups)
-# bar_width = 0.12
-# opacity = 0.8
 
-# for i, planner_string in enumerate (planner_strings):
-#     values = []
-#     for problem_file_name in problem_file_names:
-#         if reports[problem_file_name][planner_string][2]:
-#             values.append(reports[problem_file_name][planner_string][0])
-#         else:
-#             values.append(0)
+reports = pickle.load(file=open( "Reports/report_random", "rb" ))
+planner_strings = list (reports[list (reports.keys())[0]].keys())
 
-#     plt.bar(index + bar_width * i, values, bar_width,alpha=opacity,label=planner_string)
+print (reports)
 
-# plt.xlabel('Problem')
-# plt.ylabel('Running time')
-# plt.title('Runtime comparisan for different planners')
+problem_file_names = reports.keys()
+
+n_groups = len (problem_file_names)
+
+# create plot
+fig, ax = plt.subplots()
+index = np.arange(n_groups)
+bar_width = 0.12
+opacity = 0.8
+
+for i, planner_string in enumerate (planner_strings):
+    values = []
+    plot_values = []
+    if planner_string == "backward":
+        continue
+    for problem_file_name in problem_file_names:
+        for r in reports[problem_file_name][planner_string].keys():
+            for q in reports[problem_file_name][planner_string][r]:
+                values.append(q[0])
+        time = min (values) #/ len(values)
+        plot_values.append(time)
+        print ("aaaa" , plot_values)
+    plt.bar(index + bar_width * i, plot_values, bar_width,alpha=opacity,label=planner_string)
+
+plt.xlabel('Problem')
+plt.ylabel('Running time')
+plt.title('Runtime comparisan for different planners')
 
 # plt.xticks(index + bar_width - 0.05, [s.split (".txt")[0] for s in problem_file_names])
-# plt.legend()
+plt.legend()
 
-# plt.tight_layout()
-# plt.show()
+plt.tight_layout()
+plt.show()
 
 # for i, planner_string in enumerate (planner_strings):
 #     values = []
@@ -69,6 +92,7 @@ import matplotlib.pyplot as plt
 
 reports_random = pickle.load(file=open( "Reports/report_random", "rb" ))
 planner_strings = list (reports_random[list (reports_random.keys())[0]].keys())
+print ("planner strings:", planner_strings, reports_random[25][planner_strings[0]])
 for i, planner_string in enumerate (planner_strings):
     time_values = []
     length_values = []
