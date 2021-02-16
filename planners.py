@@ -187,7 +187,7 @@ def ff_search(s0:State, all_actions, goal:Goal, plan=Plan(), enforced=True, prin
             if naive_greedy:
                 if not new_success:
                     continue
-                print(new_h)
+                
                 if new_h < heuristic:
                     
                     cur_level_states.append(new_s)
