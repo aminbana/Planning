@@ -6,6 +6,35 @@ import numpy as np
 import random
 
 
+def reversal_n_problem (n):
+    assert n >= 2
+    propositions = []
+    propositions_goal = []
+
+    objects = ["a"+str(i) for i in range (n)]
+
+
+    propositions.append(p("arm-empty"))
+    propositions.append(p("on-table",[objects[0]]))
+    
+    propositions_goal.append(p("arm-empty"))
+    propositions_goal.append(p("on-table",[objects[-1]]))
+    
+    for i in range (n-1):
+        propositions.append(p("on", [objects[i+1],objects[i]]))
+    for i in range (1,n):
+        propositions_goal.append(p("on", [objects[-i-1],objects[-i]]))
+    
+    
+    propositions.append(p("clear", objects[-1]))
+    propositions_goal.append(p("clear", objects[0]))
+
+    s0 = State(propositions)
+    goal = Goal(propositions_goal, {})
+
+    return s0, goal
+
+
 def get_sample_problem_definition(filepath):
     p_s0 = {p("cl","e"), p("ot" , "b"), p("on", ["a","b"]), p("ot", "c"), p("cl", "c"), p("cl", "d"), p("ot", "d") , p("on", ["e","a"]), p("hol", "x")}
     s0 = State(p_s0)

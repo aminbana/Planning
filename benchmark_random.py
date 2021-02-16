@@ -17,8 +17,8 @@ problem_path = parent_path + base_problem_file_names
 all_actions, predicates = read_domain(domain_path)
 base_s0, _ = read_problem(problem_path, predicates)
 
-planners = [planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
-planner_strings = ["ff_modified_enforced", "ff_enforced", "ff_naive"]
+planners = [planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive]
+planner_strings = ["backward", "forward", "ff_modified_enforced", "ff_enforced", "ff_naive"]
 
 reports = {}
 
@@ -36,47 +36,45 @@ if __name__ == '__main__':
         reports[max_length] = {}
         
         for planner, planner_string in zip (planners, planner_strings):
-            reports[max_length][planner_string] = []
+            reports[max_length][planner_string] = {}
             print ("planner:", planner_string)
-            for problem in problems:
-                s0, goal = problem
-                # print ("****** s0", s0)
-                # print ("********* ", goal)
-                # print (s0.isGoal(goal))
-                # final_plan, success = planner(s0, all_actions, goal)
-                # print (1/0)
-                manager = multiprocessing.Manager()
-                return_list = manager.list()
-                return_list.append([])
-                return_list.append(False)
+            for repeats in range (5):
+                reports[max_length][planner_string][repeats] = []
+                for problem in problems:
+                    s0, goal = problem
 
-                th = multiprocessing.Process(target=thread_function, args=(planner, s0, all_actions, goal, return_list))
+                    manager = multiprocessing.Manager()
+                    return_list = manager.list()
+                    return_list.append([])
+                    return_list.append(False)
 
-                start_time = time.time()
-                th.start()
+                    th = multiprocessing.Process(target=thread_function, args=(planner, s0, all_actions, goal, return_list))
 
-            
-                while True:
-                    if not th.is_alive():
-                        break
-                    elif time.time() - start_time > max_time_limit:
-                        th.terminate()
-                    time.sleep(0.1)
-                        
-                stop_time = time.time()
-                print ("return_list" , return_list)
-                final_plan, success = return_list
-                print ()
-                elapsed_time = max_time_limit
-                plan_len = 0
-                if success:
-                    plan_len = len(final_plan.actions)
-                    if plan_len == 0:
-                        print (s0, goal, final_plan)
+                    start_time = time.time()
+                    th.start()
 
-                elapsed_time = stop_time - start_time
-                reports[max_length][planner_string].append ((elapsed_time , plan_len, success))
                 
+                    while True:
+                        if not th.is_alive():
+                            break
+                        elif time.time() - start_time > max_time_limit:
+                            th.terminate()
+                        time.sleep(0.1)
+                            
+                    stop_time = time.time()
+                    print ("return_list" , return_list)
+                    final_plan, success = return_list
+                    print ()
+                    elapsed_time = max_time_limit
+                    plan_len = 0
+                    if success:
+                        plan_len = len(final_plan.actions)
+                        if plan_len == 0:
+                            print (s0, goal, final_plan)
+
+                    elapsed_time = stop_time - start_time
+                    reports[max_length][planner_string][repeats].append ((elapsed_time , plan_len, success))
+                    
 
         print (reports)
     import pickle

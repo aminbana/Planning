@@ -1,5 +1,6 @@
 
 
+from randomProblemGenerator import reversal_n_problem
 from graphic import Graphic
 from file_io import read_domain, read_problem
 from planners import planner_ff, planner_backward, planner_forward, planner_ff_modified_enforced, planner_ff_enforced, planner_ff_naive
@@ -25,18 +26,22 @@ def thread_function(planner, s0, all_actions, goal, queue):
     queue[1] = success
 
 if __name__ == '__main__':
-    for problem_file_name in problem_file_names:
-        print ("Solving problem" , problem_file_name , "...")
-        problem_path = parent_path + problem_file_name
-
-        all_actions, predicates = read_domain(domain_path)
-        s0, goal = read_problem(problem_path, predicates)
+    all_actions, predicates = read_domain(domain_path)
+    for n in range(2,10):
         
+        problem_file_name = f"reversal_{n}"
+
+        
+        s0, goal = reversal_n_problem(n)
+                
         g = Graphic()
+        
         reports[problem_file_name] = {}
         for planner, planner_string in zip (planners, planner_strings):
             reports[problem_file_name][planner_string] = {}
             for repeats in range (5):
+                print (f"solving {problem_file_name} with {planner_string}")
+
                 manager = multiprocessing.Manager()
                 return_list = manager.list()
                 return_list.append([])
@@ -69,6 +74,6 @@ if __name__ == '__main__':
                 
                 reports[problem_file_name][planner_string][repeats] = (elapsed_time , plan_len, success)
 
-        # print (reports)
+        print (reports)
     import pickle
-    pickle.dump(reports, file=open( "Reports/report", "wb" ))
+    pickle.dump(reports, file=open( "Reports/report_reversal", "wb" ))
