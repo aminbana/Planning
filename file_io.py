@@ -176,7 +176,24 @@ def read_problem(path, predicates):
     lines = f.readlines()
     lines.append('\n')
     
-    num_of_objs, _ = find_first_pattern(lines, 'OBJECTS')
+    num_of_objs, st_ind = find_first_pattern(lines, 'OBJECTS')
+    end_ind = 0
+    
+    for l, line in enumerate(lines):
+
+        if l < st_ind:
+            continue
+        
+        if st_ind > 0 and line == '\n':
+            end_ind = l
+            assert(st_ind < end_ind)
+            
+            objects = [lll.rstrip() for lll in lines[st_ind: end_ind]]
+            st_ind = 0
+            break
+    
+    assert(len(objects) == num_of_objs)
+
     
     num_of_s0, st_ind = find_first_pattern(lines, 'INITIAL-STATE')
     end_ind = 0
@@ -221,5 +238,5 @@ def read_problem(path, predicates):
     # print(goal)
     
     
-    return s0, goal
+    return s0, goal, objects
 
