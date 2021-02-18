@@ -22,7 +22,7 @@ CLEAR
 a
 
 
-GOALS:3
+GOALS:5
 ON
 d
 c
@@ -32,3 +32,7 @@ b
 ON
 b
 a
+ON-TABLE
+a
+CLEAR
+d
